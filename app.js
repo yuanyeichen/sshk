@@ -1,5 +1,5 @@
 'use strict';
-const {films,stories}=window.FILM_CONTENT;
+const {stories}=window.FILM_CONTENT;
 const $=selector=>document.querySelector(selector);
 const $$=selector=>[...document.querySelectorAll(selector)];
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
@@ -10,7 +10,6 @@ const heroViewport=hero.querySelector('.hero-sticky');
 const heroVideo=$('#hero-video');
 const brand=$('.brand-link');
 const manifesto=$('.hero-manifesto');
-const backgroundVideos=$$('[data-lazy-video]');
 const featureMedia=$$('.latest .film-visual');
 const statement=$('.documentary-statement');
 const statementText=statement?.querySelector('.statement-text');
@@ -25,7 +24,6 @@ let menuOpen=false;
 let heroVisible=false;
 let scrollFrame=0;
 let mobileMotionHeight=0;
-const visibleVideos=new Set();
 function syncHeroCopyHeight(){
  if(!portraitPhoneLayout.matches){hero.style.removeProperty('--mobile-copy-content-height');return;}
  const height=`${manifesto.offsetHeight}px`;
@@ -47,35 +45,33 @@ function syncResponsiveMetrics(){
 }
 function motionViewportHeight(){return phoneLayout.matches?(mobileMotionHeight||innerHeight):innerHeight;}
 function backgroundAllowed(){return !reduced.matches&&!document.hidden&&!menuOpen&&!$('dialog[open]');}
-function playBackground(video){
+function playHeroVideo(){
+ const video=heroVideo;
  if(!backgroundAllowed())return;
  video.defaultMuted=true;
  video.muted=true;
  video.playsInline=true;
- if(video===heroVideo&&!video.getAttribute('src')){
+ if(!video.getAttribute('src')){
   const compact=innerWidth<700||navigator.connection?.saveData;
   video.src=compact?video.dataset.srcMobile:video.dataset.srcDesktop;
  }
- if(video.dataset.lazyVideo&&!video.getAttribute('src'))video.src=video.dataset.lazyVideo;
  const attempt=video.play();
  if(attempt)attempt.then(()=>{
   if(!backgroundAllowed()){video.pause();return;}
-  if(video===heroVideo)video.classList.add('is-ready');
-  else video.classList.add('is-playing');
- }).catch(()=>{if(video===heroVideo)video.classList.remove('is-ready');});
+  video.classList.add('is-ready');
+ }).catch(()=>video.classList.remove('is-ready'));
 }
 function updateMedia(){
  const allowed=backgroundAllowed();
- if(allowed&&heroVisible)playBackground(heroVideo);
+ if(allowed&&heroVisible)playHeroVideo();
  else heroVideo.pause();
- backgroundVideos.forEach(video=>{if(allowed&&visibleVideos.has(video))playBackground(video);else video.pause();});
 }
 heroVideo.addEventListener('playing',()=>heroVideo.classList.add('is-ready'));
 heroVideo.addEventListener('error',()=>heroVideo.classList.remove('is-ready'));
 function resumeVisibleMedia(){
  if(!backgroundAllowed())return;
  const rect=heroViewport.getBoundingClientRect();
- if(rect.bottom>0&&rect.top<innerHeight&&heroVideo.paused)playBackground(heroVideo);
+ if(rect.bottom>0&&rect.top<innerHeight&&heroVideo.paused)playHeroVideo();
 }
 // Retry in a real interaction handler when a mobile browser blocks autoplay.
 ['pointerdown','touchend','keydown'].forEach(type=>document.addEventListener(type,resumeVisibleMedia,{passive:true}));
@@ -119,7 +115,7 @@ function paintScroll(){
  paintStatement();
  const mobile=phoneLayout.matches;
  // Small viewport units keep this timeline stable as Safari's address bar moves.
- const vh=mobile?hero.querySelector('.hero-sticky').clientHeight:innerHeight;
+ const vh=mobile?heroViewport.clientHeight:innerHeight;
  const p=Math.min(1,Math.max(0,scrollY/(vh*.72)));
  const maxWidth=mobile?Math.min(260,innerWidth*.48):Math.min(820,innerWidth*.44);
  const width=maxWidth+(110-maxWidth)*(1-Math.pow(1-p,2));
@@ -148,12 +144,10 @@ syncResponsiveMetrics();
 paintScroll();
 const mediaObserver=new IntersectionObserver(entries=>{
  entries.forEach(entry=>{
-  if(entry.target===heroViewport)heroVisible=entry.isIntersecting;
-  else{const video=entry.target.querySelector('[data-lazy-video]');if(!video)return;if(entry.isIntersecting)visibleVideos.add(video);else visibleVideos.delete(video);}
+  heroVisible=entry.isIntersecting;
  });updateMedia();
 },{threshold:[0,.1]});
 mediaObserver.observe(heroViewport);
-backgroundVideos.forEach(video=>mediaObserver.observe(video.parentElement));
 const revealTargets=new Map();
 const revealObserver=new IntersectionObserver(entries=>{
  entries.forEach(entry=>{if(entry.isIntersecting){revealTargets.get(entry.target)?.forEach(el=>el.classList.add('is-revealed'));revealObserver.unobserve(entry.target);}});
@@ -161,7 +155,7 @@ const revealObserver=new IntersectionObserver(entries=>{
 if(!reduced.matches)document.body.classList.add('js-motion');
 $$('.media-reveal:not(.latest .media-reveal)').forEach(el=>{const target=el.parentElement;const list=revealTargets.get(target)||[];list.push(el);revealTargets.set(target,list);revealObserver.observe(target);});
 reduced.addEventListener('change',()=>{document.body.classList.toggle('js-motion',!reduced.matches);paintScroll();updateMedia();});
-document.addEventListener('visibilitychange',()=>{updateMedia();if(document.hidden)$('#dialog-video').pause();});
+document.addEventListener('visibilitychange',updateMedia);
 
 updateMedia();
 
@@ -190,36 +184,21 @@ document.addEventListener('keydown',event=>{
 });
 addEventListener('resize',()=>{if(innerWidth>=700&&menuOpen)setMenu(false);});
 
-// Real, reversible dialogs for viewing footage, story details and consultation.
-const videoDialog=$('#video-dialog');
-const dialogVideo=$('#dialog-video');
+// Dialogs for story details, packages and WeChat consultation.
 const pricingDialog=$('#pricing-dialog');
 const consultDialog=$('#consult-dialog');
 const storyDialog=$('#story-dialog');
-let selectedStory=0;
-function openDialog(dialog){setMenu(false);dialog.showModal();document.body.classList.add('dialog-is-open');updateMedia();$('.cursor-label').classList.remove('is-visible');}
+function openDialog(dialog){setMenu(false);dialog.showModal();document.body.classList.add('dialog-is-open');updateMedia();}
 $$('dialog').forEach(dialog=>{
  dialog.querySelector('.dialog-close').addEventListener('click',()=>dialog.close());
  dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
  dialog.addEventListener('close',()=>{
   document.body.classList.toggle('dialog-is-open',!!$('dialog[open]'));
-  if(dialog===videoDialog){dialogVideo.pause();dialogVideo.removeAttribute('src');dialogVideo.load();}
   updateMedia();
  });
 });
-function openFilm(index){
- const film=index===-1?{title:'树上花开 · 人生影像',video:heroVideo.getAttribute('src')||heroVideo.dataset.srcDesktop,poster:'assets/hero-web-poster-20261015.jpg?v=clean-20261016'}:films[index];
- if(!film)return;
- $('#video-title').textContent=film.title;
- dialogVideo.poster=film.poster;dialogVideo.src=film.video;
- openDialog(videoDialog);
- dialogVideo.play().catch(()=>{});
-}
-$$('[data-film]').forEach(button=>button.addEventListener('click',()=>openFilm(Number(button.dataset.film))));
-$$('[data-reel]').forEach(button=>button.addEventListener('click',()=>openFilm(-1)));
 $$('[data-story]').forEach(button=>button.addEventListener('click',()=>{
- selectedStory=Number(button.dataset.story);
- const story=stories[selectedStory];
+ const story=stories[Number(button.dataset.story)];
  $('#dialog-story-image').src=story.image;$('#dialog-story-image').alt=story.title;
  $('#dialog-story-category').textContent=story.label;
  $('#dialog-story-title').textContent=story.title;
@@ -236,14 +215,3 @@ $$('[data-consult]').forEach(button=>button.addEventListener('click',()=>{if(pri
 $('#story-consult').addEventListener('click',()=>{storyDialog.close();openConsult();});
 $$('[data-open-pricing]').forEach(link=>link.addEventListener('click',event=>{event.preventDefault();openDialog(pricingDialog);}));
 if(location.hash==='#pricing')openDialog(pricingDialog);
-
-// Desktop pointer label accompanies imagery without replacing focus or touch controls.
-const cursor=$('.cursor-label');
-if(matchMedia('(hover:hover) and (pointer:fine)').matches&&!reduced.matches){
- $$('[data-cursor]').forEach(target=>{
-  target.addEventListener('pointerenter',()=>{if($('dialog[open]'))return;cursor.textContent=target.dataset.cursor;cursor.classList.add('is-visible');});
-  target.addEventListener('pointerleave',()=>cursor.classList.remove('is-visible'));
- });
- addEventListener('pointermove',event=>{cursor.style.transform=`translate3d(${event.clientX}px,${event.clientY}px,0) translate(-50%,-50%)`;},{passive:true});
- document.addEventListener('pointerleave',()=>cursor.classList.remove('is-visible'));
-}
