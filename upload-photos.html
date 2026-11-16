@@ -9,77 +9,65 @@
   main { max-width: 34rem; margin: 6vh auto; background: #fff; padding: clamp(20px, 5vw, 42px); border-radius: 16px; }
   label { display: block; font-weight: 600; margin: 18px 0 6px; }
   input { display: block; box-sizing: border-box; max-width: 100%; font: inherit; }
-  input[type=password] { padding: 8px 12px; border: 1px solid #797566; border-radius: 6px; }
   button { margin-top: 24px; padding: 10px 20px; background: #312a1e; color: #fff; border: 0; border-radius: 7px; font: inherit; cursor: pointer; }
   button:disabled { opacity: .65; }
-  li { overflow-wrap: anywhere; }
+  #result { overflow-wrap: anywhere; }
   .home { color: #60533d; }
 </style>
 <main>
   <a class="home" href="./">返回树上花开</a>
   <h1>上传老照片</h1>
   <form id="upload">
-    <label for="code">上传码</label>
-    <input id="code" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required>
-    <label for="photos">选择照片</label>
-    <input id="photos" type="file" accept="image/jpeg,image/png,image/webp" multiple required aria-describedby="format">
-    <p id="format">支持多选 JPG、PNG、WebP，单张不超过 20 MB。</p>
+    <label for="photo">选择照片</label>
+    <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" required aria-describedby="format">
+    <p id="format">每次上传一张。支持 JPG、PNG、WebP，文件不超过 20 MB。</p>
     <button type="submit">上传照片</button>
   </form>
-  <ul id="results" aria-live="polite"></ul>
+  <p id="result" role="status"></p>
 </main>
 <script>
   const form = document.getElementById("upload");
-  const codeInput = document.getElementById("code");
-  const photoInput = document.getElementById("photos");
-  const results = document.getElementById("results");
+  const photoInput = document.getElementById("photo");
+  const result = document.getElementById("result");
   const submit = form.querySelector("button");
   const endpoint = "https://sshk-photo-intake.yuanyeichen.workers.dev/upload";
-  const received = new Map();
-  photoInput.addEventListener("change", () => {
-    received.clear();
-    results.replaceChildren();
-  });
+
+  photoInput.addEventListener("change", () => { result.textContent = ""; });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const files = Array.from(photoInput.files);
-    const code = codeInput.value.trim();
+    if (submit.disabled) return;
+    if (photoInput.files.length !== 1) {
+      result.textContent = "请选择一张照片。";
+      return;
+    }
+
+    const file = photoInput.files[0];
+    if (file.size > 20 * 1024 * 1024) {
+      result.textContent = "照片超过 20 MB，请重新选择。";
+      return;
+    }
+
     submit.disabled = true;
-    codeInput.disabled = true;
     photoInput.disabled = true;
-    results.replaceChildren();
+    result.textContent = "正在上传 " + file.name;
     try {
-      for (const file of files) {
-        const row = document.createElement("li");
-        row.textContent = file.name + " · 正在上传";
-        results.append(row);
-        if (received.has(file)) {
-          row.textContent = file.name + " · 已接收，编号 " + received.get(file);
-          continue;
-        }
-        if (file.size > 20 * 1024 * 1024) {
-          row.textContent = file.name + " · 超过 20 MB";
-          continue;
-        }
-        try {
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: {"X-Upload-Code": code, "Content-Type": "application/octet-stream"},
-            body: file,
-          });
-          const data = await response.json();
-          if (response.ok) received.set(file, data.receipt.slice(0, 8));
-          row.textContent = file.name + (response.ok
-            ? " · 已接收，编号 " + data.receipt.slice(0, 8)
-            : " · " + data.error);
-        } catch {
-          row.textContent = file.name + " · 上传未获确认，请稍后重试";
-        }
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {"Content-Type": "application/octet-stream"},
+        body: file,
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        result.textContent = data.error;
+        return;
       }
+      result.textContent = file.name + " · 已接收，编号 " + data.receipt.slice(0, 8);
+      form.reset();
+    } catch {
+      result.textContent = "上传未获确认，请稍后重试。";
     } finally {
       submit.disabled = false;
-      codeInput.disabled = false;
       photoInput.disabled = false;
     }
   });
