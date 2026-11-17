@@ -37,6 +37,18 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   background: linear-gradient(0deg, #192c399e, transparent);
   pointer-events: none;
 }
+/* Display the original transparent gold logo without its empty canvas margins. */
+.hero-brand {
+  position: absolute;
+  z-index: 2;
+  top: max(clamp(14px, 2.7vw, 42px), env(safe-area-inset-top));
+  right: max(clamp(16px, 2.7vw, 42px), env(safe-area-inset-right));
+  width: clamp(110px, 13vw, 190px);
+  height: auto;
+  aspect-ratio: 740 / 130;
+  overflow: hidden;
+  pointer-events: none;
+}
 .hero-caption {
   position: absolute;
   top: 49%;
