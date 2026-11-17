@@ -80,15 +80,15 @@ function paintWorkflow(height) {
 }
 
 function paintGallery(height) {
-  if (!desktopGallery.matches) return;
   const galleryRect = gallery.getBoundingClientRect();
   if (galleryRect.top > height || galleryRect.bottom < 0) return;
 
-  const center = height * .53;
+  // Mobile places the image above its copy; focus the image in the upper reading area.
+  const center = height * (desktopGallery.matches ? .53 : .32);
   let nearest = activeFilm;
   let nearestDistance = Infinity;
   films.forEach((film, index) => {
-    const rect = film.getBoundingClientRect();
+    const rect = (desktopGallery.matches ? film : filmFrames[index]).getBoundingClientRect();
     const distance = Math.abs(rect.top + rect.height / 2 - center);
     if (distance < nearestDistance) {
       nearest = index;
