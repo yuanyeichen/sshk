@@ -76,7 +76,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
 .hero-brand {
   position: absolute; inset-inline: 0; top: clamp(20px, 4svh, 38px);
 }
-.hero-brand img { width: clamp(108px, 10vw, 142px); height: auto; filter: drop-shadow(0 2px 5px #17110e8c); }
+.hero-brand img { width: clamp(176px, 15vw, 220px); height: auto; filter: drop-shadow(0 0 2px #17110ecc) drop-shadow(0 4px 12px #17110ecc); }
 .hero-cover-note {
   padding-block: 24px clamp(120px, 15svh, 160px);
   color: #f3f1ed; font-size: 15px; line-height: 1.85; text-shadow: 0 1px 6px #17110eaa;
