@@ -524,7 +524,7 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
 .family-portrait { background: var(--surface) }
 .photo-services { display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 20px 24px }
 .photo-service { display: grid; grid-row: span 2; grid-template-rows: subgrid; min-width: 0 }
-.photo-service-heading h3 { margin-bottom: 8px; font-size: clamp(21px, 2vw, 28px); line-height: 1.4 }
+.photo-service-heading h2 { margin-bottom: 12px; font-size: clamp(27px, 2.7vw, 38px); line-height: 1.4 }
 .photo-service-heading p { max-width: 42em; color: var(--quiet); font: 400 14px/1.8 var(--body) }
 .portrait-visual { position: relative; min-height: 0; background: var(--surface-alt) }
 .portrait-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
