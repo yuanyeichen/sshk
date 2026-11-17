@@ -222,11 +222,12 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   object-fit: cover;
   object-position: var(--film-focus, 50%) center;
 }
-.film-type:nth-child(1) { --film-focus: 52% }
+.film-type:nth-child(1) { --film-focus: 50% }
 .film-type:nth-child(2) { --film-focus: 47% }
 .film-type:nth-child(3) { --film-focus: 55% }
 .film-type:nth-child(4) { --film-focus: 50% }
 .film-type:nth-child(5) { --film-focus: 58% }
+.film-type:nth-child(6) { --film-focus: 52% }
 .film-type::before {
   content: "";
   position: absolute;
@@ -519,29 +520,16 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   .reveal.is-pending:not(:focus-within) { opacity: 1; transform: none }
 }
 
-/* In-page photo restoration comparison */
-.photo-restoration { background: var(--surface) }
-.restoration-copy {
+/* AI family portrait example */
+.family-portrait { background: var(--surface) }
+.portrait-copy {
   max-width: 51em;
   margin-top: 12px;
   color: var(--quiet);
   font: 400 14px/1.8 var(--body);
 }
-.photo-comparison {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--column-gap);
-}
-.photo-comparison figure { min-width: 0 }
-.photo-comparison figcaption {
-  padding-bottom: 11px;
-  font: 300 clamp(18px, 1.7vw, 23px)/1.5 var(--heading);
-}
-.photo-comparison img { aspect-ratio: 3 / 2; object-fit: contain }
-.restoration-note { margin-top: 13px; color: var(--quiet); font: 400 12px/1.7 var(--body) }
-@media (max-width: 600px) {
-  .photo-comparison { grid-template-columns: minmax(0, 1fr); gap: 22px }
-}
+.portrait-example img { aspect-ratio: 3 / 2; object-fit: contain }
+.portrait-example figcaption { margin-top: 13px; color: var(--quiet); font: 400 12px/1.7 var(--body) }
 
 /* Phone layout, checked at iPhone 16 Pro portrait width (402 CSS px). */
 @media (max-width: 600px) {
@@ -553,7 +541,7 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   .chapter-heading { margin-bottom: 24px }
   .prologue h2, .chapter-heading h2 { font-size: 29px; line-height: 1.4 }
   .connected-list p, .timeline p, .about :where(p:not(.chapter-label)),
-  .restoration-copy { font-size: 15px; line-height: 1.85 }
+  .portrait-copy { font-size: 15px; line-height: 1.85 }
   .connected-list > li { padding-bottom: 24px }
   .connected-list h3, .origins .connected-list h3, .timeline h3 { font-size: 20px }
   .film-types, .film-types.is-interactive { gap: 10px }
@@ -569,7 +557,6 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   .director-profile :is(p, dt, dd) { font-size: 14px; line-height: 1.85 }
   .about .director-assignment, .about .team-support p { font-size: 13px }
   .director-grid { row-gap: 30px }
-  .photo-comparison { gap: 26px }
   .footer { padding-bottom: max(16px, env(safe-area-inset-bottom)) }
 }
 @media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
