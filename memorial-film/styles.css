@@ -520,16 +520,31 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   .reveal.is-pending:not(:focus-within) { opacity: 1; transform: none }
 }
 
-/* AI family portrait example */
+/* Family portrait and restoration: one large image and two stacked examples. */
 .family-portrait { background: var(--surface) }
-.portrait-copy {
-  max-width: 51em;
-  margin-top: 12px;
-  color: var(--quiet);
-  font: 400 14px/1.8 var(--body);
+.photo-services { display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(0, 1fr); gap: 20px 24px }
+.photo-service { display: grid; grid-row: span 2; grid-template-rows: subgrid; min-width: 0 }
+.photo-service-heading h3 { margin-bottom: 8px; font-size: clamp(21px, 2vw, 28px); line-height: 1.4 }
+.photo-service-heading p { max-width: 42em; color: var(--quiet); font: 400 14px/1.8 var(--body) }
+.portrait-visual { position: relative; min-height: 0; background: var(--surface-alt) }
+.portrait-visual img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover }
+.restoration-pair { display: grid; gap: 12px }
+.restoration-pair figure { position: relative; min-width: 0 }
+.restoration-pair img { aspect-ratio: 3 / 2; object-fit: cover }
+.restoration-pair figcaption { position: absolute; left: 12px; top: 12px; padding: 3px 10px; background: #f7f9fae8; color: var(--ink); font: 400 12px/1.7 var(--body) }
+.portrait-note { margin-top: 14px; color: var(--quiet); font: 400 12px/1.7 var(--body) }
+@supports not (grid-template-rows: subgrid) {
+  .photo-service { grid-template-rows: auto 1fr; gap: 20px }
+  .photo-service-heading { min-height: 100px }
 }
-.portrait-example img { aspect-ratio: 3 / 2; object-fit: contain }
-.portrait-example figcaption { margin-top: 13px; color: var(--quiet); font: 400 12px/1.7 var(--body) }
+@media (max-width: 700px) {
+  .photo-services { grid-template-columns: minmax(0, 1fr); row-gap: 18px }
+  .photo-service + .photo-service { margin-top: 12px }
+  .portrait-visual { aspect-ratio: 3 / 2 }
+  .photo-service-heading p { font-size: 15px; line-height: 1.85 }
+  .photo-service-heading { min-height: 0 }
+  .restoration-pair { gap: 14px }
+}
 
 /* Phone layout, checked at iPhone 16 Pro portrait width (402 CSS px). */
 @media (max-width: 600px) {
@@ -541,7 +556,7 @@ h2, h3 { font-family: var(--heading); font-weight: 300 }
   .chapter-heading { margin-bottom: 24px }
   .prologue h2, .chapter-heading h2 { font-size: 29px; line-height: 1.4 }
   .connected-list p, .timeline p, .about :where(p:not(.chapter-label)),
-  .portrait-copy { font-size: 15px; line-height: 1.85 }
+  .photo-service-heading p { font-size: 15px; line-height: 1.85 }
   .connected-list > li { padding-bottom: 24px }
   .connected-list h3, .origins .connected-list h3, .timeline h3 { font-size: 20px }
   .film-types, .film-types.is-interactive { gap: 10px }
