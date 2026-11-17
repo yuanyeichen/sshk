@@ -277,6 +277,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
   border-top: 1px solid var(--rule);
 }
 .team-group h3 { margin-bottom: clamp(14px, 1.7vw, 24px); }
+.team-group > .team-role-note { max-width: 46em; margin: -4px 0 18px; }
 .director-intro {
   display: grid; grid-template-columns: clamp(78px, 9vw, 120px) minmax(0, 1fr);
   align-items: start; gap: clamp(12px, 1.65vw, 21px);
