@@ -292,6 +292,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
   grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(18px, 2vw, 28px);
   padding: clamp(20px, 2.2vw, 32px); background: #f8edf0; text-align: center;
 }
+.cast-note { margin: -4px 0 18px; max-width: 47em; }
 .cast-grid img { aspect-ratio: 4 / 5; margin-bottom: 10px; }
 .cast-grid p { font-size: 14px; }
 
