@@ -52,7 +52,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
 }
 .hero {
   --hero-zoom: 1.035;
-  position: relative; isolation: isolate; display: grid; align-items: end;
+  position: relative; isolation: isolate; display: grid; align-items: center;
   min-height: 100svh; overflow: hidden; background: #080808;
 }
 .hero-image, .hero-shade { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -66,7 +66,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
 }
 .hero-shade {
   z-index: -1; pointer-events: none;
-  background: linear-gradient(0deg, #17110dda, #17110e8c 18%, transparent 46%);
+  background: linear-gradient(180deg, #21191c70, #21191ca6 50%, #21191c82);
 }
 .hero::after {
   content: ""; position: absolute; inset: auto 0 0; height: clamp(70px, 8vw, 110px);
@@ -78,16 +78,20 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
 }
 .hero-brand img { width: clamp(176px, 15vw, 220px); height: auto; filter: drop-shadow(0 0 2px #17110ecc) drop-shadow(0 4px 12px #17110ecc); }
 .hero-cover-note {
-  padding-block: 24px clamp(120px, 15svh, 160px);
-  color: #f3f1ed; font-size: 15px; line-height: 1.85; text-shadow: 0 1px 6px #17110eaa;
+  padding-block: 92px;
+  text-align: center; text-wrap: balance;
+  color: #fff8f3; font-size: clamp(16px, 1.4vw, 21px); line-height: 1.7;
+  text-shadow: 0 1px 6px #24161888;
 }
-.hero-cover-note > p { max-width: 30em; }
+.hero-cover-note > p { max-width: 34em; margin-inline: auto; }
 .hero-cover-note h1 {
-  margin-bottom: 8px; color: #fff;
-  font-family: var(--body); font-size: clamp(17px, 1.55vw, 22px); line-height: 1.5; text-wrap: balance;
-  width: fit-content;
+  margin: 0 0 clamp(14px, 1.6vw, 24px); color: white;
+  font: 400 clamp(40px, 5.5vw, 84px)/1.16 var(--body);
 }
-.hero-service { margin-bottom: 9px; font-size: 12px; letter-spacing: .11em; }
+.hero-service {
+  margin-bottom: clamp(14px, 1.6vw, 24px); color: #ffe5bc;
+  font-size: 12px; font-weight: 600; letter-spacing: .18em;
+}
 .motion-enabled .hero.is-animated h1 { animation: text-reveal .7s .12s var(--ease) both; }
 .motion-enabled .hero.is-animated .hero-cover-note > p:last-child {
   animation: text-reveal .76s .24s var(--ease) both;
@@ -382,7 +386,7 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
 }
 @media (max-width: 699px) {
   .hero { --hero-zoom: 1.018; }
-  .hero-cover-note { font-size: 14px; }
+  .hero-cover-note > p:last-child { max-width: 22em; }
   .manifesto-text { font-size: 14px; }
   .contact-layout { grid-template-columns: 1fr; gap: 14px; }
   .contact-info { font-size: 14px; }
@@ -401,8 +405,6 @@ h3 { font-size: clamp(24px, 2.4vw, 34px); line-height: 1.35; letter-spacing: .02
   .collection-heading { margin-bottom: 24px; }
   .cast-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero-brand { top: max(24px, env(safe-area-inset-top)); }
-  .hero-cover-note { padding-bottom: max(110px, calc(90px + env(safe-area-inset-bottom))); }
-  .hero-cover-note h1 { font-size: 19px; max-width: 17em; }
   .manifesto-text { font-size: 15px; line-height: 1.95; }
   .collection-intro { margin-top: 16px; }
   .collection-guidance { margin-top: 40px; }
